@@ -77,6 +77,7 @@ def get_youtube_audio_url(url):
         'extract_flat': False,
         'force_generic_extractor': False,
         'proxy': proxy, 
+        'nocheckcertificate': True,
     }
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
