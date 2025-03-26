@@ -19,9 +19,6 @@ DISCORD_TOKEN = os.environ['discordtoken']
 def get_youtube_audio_url(url):
     """Extracts direct audio stream URL from YouTube using rotating proxies"""
     
-    # Randomly select a proxy from the list
-    proxy = random.choice(proxies)
-    
     ydl_opts = {
         'format': 'bestaudio',
         'noplaylist': True,
