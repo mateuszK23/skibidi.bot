@@ -1,0 +1,30 @@
+# Ignore Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore virtual environment
+venv/
+.env/
+
+# Ignore thirdparty dependencies
+thirdparty/
+
+# Ignore logs and temp files
+*.log
+*.tmp
+
+# Ignore IDE and editor files
+.vscode/
+.idea/
+*.swp
+
+# Ignore compiled and temporary files
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Ignore launch script
+src/launch.vbs
