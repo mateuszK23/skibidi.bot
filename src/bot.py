@@ -3,7 +3,6 @@ from discord.ext import commands
 import yt_dlp
 import random
 import asyncio
-import webserver
 import random
 import os
 
@@ -14,7 +13,8 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 song_queue = {}
 
 DISCORD_TOKEN = os.environ['discordtoken']
-# FFMPEG_PATH = r"D:\dev\ffmpeg-7.1.1-essentials_build\bin\ffmpeg.exe"
+FFMPEG_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'thirdparty', 'ffmpeg-7.1.1-essentials_build', 'bin', 'ffmpeg.exe' )
+
 
 def get_youtube_audio_url(url):
     """Extracts direct audio stream URL from YouTube using yt-dlp without authentication."""
@@ -37,6 +37,7 @@ def get_youtube_audio_url(url):
     except Exception as e:
         print(f"Error extracting info: {e}")
         return None, None
+
 
 @bot.command()
 async def play(ctx, url: str):
@@ -75,8 +76,8 @@ async def play_next(ctx):
         }
 
         # Create FFmpegPCMAudio source
-        # source = discord.FFmpegPCMAudio(audio_url, executable=FFMPEG_PATH, **ffmpeg_options)
-        source = discord.FFmpegPCMAudio(audio_url, **ffmpeg_options)
+        source = discord.FFmpegPCMAudio(audio_url, executable=FFMPEG_PATH, **ffmpeg_options)
+        # source = discord.FFmpegPCMAudio(audio_url, **ffmpeg_options)
         # Attach title to the voice client source
         source.title = song_title  
 
@@ -110,6 +111,7 @@ async def skip(ctx):
             await play_next(ctx)  # ✅ Call play_next manually only after stop
         else:
             await ctx.send("That was the last song in the queue. Add more songs with `!play <url>`.")
+            await ctx.voice_client.disconnect()
     else:
         await ctx.send("No song is currently playing!")
 
@@ -123,6 +125,7 @@ async def pause(ctx):
     else:
         await ctx.send("No music is playing currently.")
 
+
 @bot.command()
 async def resume(ctx):
     """Resumes the music"""
@@ -131,6 +134,7 @@ async def resume(ctx):
         await ctx.send("Resumed ▶️")
     else:
         await ctx.send("The music is not paused.")
+
 
 @bot.command()
 async def kill(ctx):
@@ -160,6 +164,18 @@ async def queue(ctx):
 
 
 @bot.command()
+async def skibidi(ctx):
+    """Play skibidi The Shoebody Bop"""
+    await play(ctx, "https://www.youtube.com/watch?v=XnnLRkPRqYM")
+
+
+@bot.command()
+async def slow_skibidi(ctx):
+    """Play slow skibidi The Shoebody Bop"""
+    await play(ctx, "https://www.youtube.com/watch?v=mRNtw_Tc1Jc&ab_channel=DrueLanglois")
+
+
+@bot.command()
 async def showpen(ctx):
     """Pokazowka Macka"""
     await ctx.send("*Maciej pokazuje pena*")
@@ -171,6 +187,7 @@ async def oneshot(ctx):
     """Pokazowka Macka"""
     await ctx.send("*Maciej oneshotuje pena*")
     return
+
 
 # Create a dictionary mapping roles to champions
 champions_by_role = {
@@ -212,6 +229,7 @@ champions_by_role = {
     ],
 }
 
+
 def assign_roles_and_champions(name1, name2, name3, name4, name5):
     """Assigns a role and a suitable champion to each player"""
     roles = list(champions_by_role.keys())
@@ -224,6 +242,7 @@ def assign_roles_and_champions(name1, name2, name3, name4, name5):
         assigned_team[role] = {"player": player, "champion": champion}
 
     return assigned_team
+
 
 @bot.command()
 async def team(ctx, name1, name2, name3, name4, name5):
@@ -238,10 +257,12 @@ async def team(ctx, name1, name2, name3, name4, name5):
 
     await ctx.send(response)
 
+
 @bot.command()
 async def ktomaracje(ctx):
     """Who's right?"""
     await ctx.send("NIE Maciek")
 
-webserver.keep_alive()
+
+print(FFMPEG_PATH)
 bot.run(DISCORD_TOKEN)
