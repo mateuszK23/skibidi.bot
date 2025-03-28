@@ -14,23 +14,29 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 song_queue = {}
 
 DISCORD_TOKEN = os.environ['discordtoken']
-# FFMPEG_PATH = r".\ffmpeg-7.1.1-essentials_build\bin\ffmpeg.exe"
+# FFMPEG_PATH = r"D:\dev\ffmpeg-7.1.1-essentials_build\bin\ffmpeg.exe"
 
 def get_youtube_audio_url(url):
-    """Extracts direct audio stream URL from YouTube using rotating proxies"""
-    
+    """Extracts direct audio stream URL from YouTube using yt-dlp without authentication."""
     ydl_opts = {
-        'format': 'bestaudio',
+        'format': 'bestaudio[ext=m4a]/bestaudio',  # Prefer audio-only formats
         'noplaylist': True,
         'quiet': True,
-        'extract_flat': False,
-        'force_generic_extractor': False,
-        'nocheckcertificate': True,
+        'no_warnings': True,
+        'http_headers': {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
+                          '(KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36'
+        },
     }
-
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        info = ydl.extract_info(url, download=False)
-        return info['url'], info.get('title', 'Unknown')
+    try:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(url, download=False)
+            audio_url = info.get('url')
+            title = info.get('title', 'Unknown')
+            return audio_url, title
+    except Exception as e:
+        print(f"Error extracting info: {e}")
+        return None, None
 
 @bot.command()
 async def play(ctx, url: str):
