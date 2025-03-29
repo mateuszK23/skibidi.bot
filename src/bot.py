@@ -1,5 +1,7 @@
 import discord
+import logging
 from discord.ext import commands
+from logging.handlers import RotatingFileHandler
 import yt_dlp
 import random
 import asyncio
@@ -14,6 +16,19 @@ song_queue = {}
 
 DISCORD_TOKEN = os.environ['discordtoken']
 FFMPEG_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'thirdparty', 'ffmpeg-7.1.1-essentials_build', 'bin', 'ffmpeg.exe' )
+
+
+# Set up logging
+log_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'logs', 'bot.log')
+handler = RotatingFileHandler(log_file, maxBytes=5*1024*1024, backupCount=3)  # 5MB per file, keep 3 backups
+formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+handler.setFormatter(formatter)
+
+logger = logging.getLogger("discord")  # Capture discord.py logs
+logger.setLevel(logging.INFO)  # Adjust to DEBUG if needed
+logger.addHandler(handler)
+
+logging.getLogger("discord.http").setLevel(logging.INFO)
 
 
 def get_youtube_audio_url(url):
