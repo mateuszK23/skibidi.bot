@@ -49,4 +49,33 @@ async def custom_help(ctx):
         embed.add_field(name=cog.qualified_name, value=commands_list or "No commands", inline=False)
     await ctx.send(embed=embed)
 
+@bot.listen("on_wavelink_track_start")
+async def on_track_start(payload):
+    print("========== TRACK START ==========")
+    print("Track:", payload.track.title)
+    print("Player:", payload.player)
+
+
+@bot.listen("on_wavelink_track_end")
+async def on_track_end(payload):
+    print("========== TRACK END ==========")
+    print("Track:", payload.track.title)
+    print("Reason:", payload.reason)
+
+
+@bot.listen("on_wavelink_track_exception")
+async def on_track_exception(payload):
+    print("========== TRACK EXCEPTION ==========")
+    print("Track:", payload.track.title)
+    print("Exception:", payload.exception)
+    print("Message:", payload.exception.message)
+    print("Severity:", payload.exception.severity)
+
+
+@bot.listen("on_wavelink_track_stuck")
+async def on_track_stuck(payload):
+    print("========== TRACK STUCK ==========")
+    print("Track:", payload.track.title)
+    print("Threshold:", payload.threshold)
+    
 bot.run(DISCORD_TOKEN)
