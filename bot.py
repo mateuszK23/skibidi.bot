@@ -583,15 +583,37 @@ async def on_wavelink_track_exception(
         f"{payload.exception}"
     )
 
-    print(
-        f"[TRACK EXCEPTION] Message: "
-        f"{payload.exception.message}"
-    )
+    # payload.exception can be an object or a dict depending on
+    # the Lavalink/Lavalink plugin implementation. Handle both.
+    if isinstance(payload.exception, dict):
 
-    print(
-        f"[TRACK EXCEPTION] Severity: "
-        f"{payload.exception.severity}"
-    )
+        print(
+            f"[TRACK EXCEPTION] Message: "
+            f"{payload.exception.get('message', 'Unknown')}"
+        )
+
+        print(
+            f"[TRACK EXCEPTION] Severity: "
+            f"{payload.exception.get('severity', 'Unknown')}"
+        )
+
+        # Extra fields for debugging
+        print(
+            f"[TRACK EXCEPTION] Cause: "
+            f"{payload.exception.get('cause', 'Unknown')}"
+        )
+
+    else:
+
+        print(
+            f"[TRACK EXCEPTION] Message: "
+            f"{getattr(payload.exception, 'message', payload.exception)}"
+        )
+
+        print(
+            f"[TRACK EXCEPTION] Severity: "
+            f"{getattr(payload.exception, 'severity', 'Unknown')}"
+        )
 
     print(
         f"[TRACK EXCEPTION] Player: "
